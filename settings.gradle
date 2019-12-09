@@ -1,0 +1,2 @@
+include ':app', ':adventofcode'
+rootProject.name='Advent of Code'
