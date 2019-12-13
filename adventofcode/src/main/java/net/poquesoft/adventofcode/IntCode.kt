@@ -7,6 +7,7 @@ class IntCode(
 ) {
     companion object {
         const val HALTCODE = Int.MIN_VALUE.toLong()
+        const val NOT_ENOUGH_INPUT = Int.MIN_VALUE.toLong() + 1
         const val DEBUG = 0
         const val INFO = 1
     }
@@ -34,6 +35,12 @@ class IntCode(
     fun input(i: Long) {
         inputList.add(i)
     }
+    fun input(i: List<Int>) {
+        i.map{
+            inputList.add(it.toLong())
+        }
+    }
+
 
     fun addZeroes() {
         val zeroes = MutableList(100) { 0L }
@@ -99,13 +106,14 @@ class IntCode(
                 1 -> d[p3pos] = p1 + p2
                 2 -> d[p3pos] = p1 * p2
                 3 -> {
+                    if (k >= inputList.size) return NOT_ENOUGH_INPUT
                     d[p1pos] = inputList[k]
                     l = 2
                     k++
                 }
                 4 -> {
                     output = p1
-                    println("OUTPUT: $output")
+                    //println("OUTPUT: $output")
                     l = 2
                     if (stopWhenOutput) {
                         i += l //Special case because return
