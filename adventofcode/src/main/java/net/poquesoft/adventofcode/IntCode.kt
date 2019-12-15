@@ -35,11 +35,14 @@ class IntCode(
     fun input(i: Long) {
         inputList.add(i)
     }
+
+/*
     fun input(i: List<Int>) {
         i.map{
             inputList.add(it.toLong())
         }
     }
+*/
 
 
     fun addZeroes() {
@@ -142,7 +145,10 @@ class IntCode(
                     relativeBase += p1.toInt()
                     l = 2
                 }
-                99 -> keepOn = false
+                99 -> {
+                    println("End: 99 Command")
+                    keepOn = false
+                }
                 else -> {
                     keepOn = false
                     println("Error: Command is ${d[i]}")

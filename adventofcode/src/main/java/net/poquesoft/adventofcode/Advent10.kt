@@ -141,7 +141,7 @@ private operator fun Coor.times(i: Int): Coor {
 }
 
 
-data class Coor(val x: Int, val y: Int) {
+data class Coor(var x: Int, var y: Int) {
     operator fun plus(d: Coor): Coor {
         return Coor(x+d.x,y+d.y)
     }
