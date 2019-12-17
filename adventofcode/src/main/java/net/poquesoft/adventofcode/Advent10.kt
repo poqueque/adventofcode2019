@@ -108,14 +108,6 @@ fun processMap1(file: String) {
 
 
 
-fun hides (d:Coor, d2:Coor): Boolean {
-    val angle1 =atan2(d.y.toDouble(),d.x.toDouble())
-    val angle2 =atan2(d2.y.toDouble(),d2.x.toDouble())
-    val mod1= sqrt(d.x.toDouble()*d.x.toDouble() + d.y.toDouble()*d.y.toDouble())
-    val mod2= sqrt(d2.x.toDouble()*d2.x.toDouble() + d2.y.toDouble()*d2.y.toDouble())
-    return (angle1 == angle2 && mod1 < mod2)
-}
-
 fun hides2(d: Coor, d2: Coor): Boolean {
     if (d.x == 0 && d2.x == 0) return (d2.y > d.y && d2.y*d.y>0)
     if (d.y == 0 && d2.y == 0) return (d2.x > d.x && d2.x*d.x>0)
@@ -130,23 +122,4 @@ fun hides2(d: Coor, d2: Coor): Boolean {
         )
         return true
     return false
-}
-
-private operator fun Coor.times(d: Coor): Int {
-    return x*x + y*y
-}
-
-private operator fun Coor.times(i: Int): Coor {
-    return Coor(x*i,y*i)
-}
-
-
-data class Coor(var x: Int, var y: Int) {
-    operator fun plus(d: Coor): Coor {
-        return Coor(x+d.x,y+d.y)
-    }
-
-    operator fun minus(d: Coor): Coor {
-        return Coor(x-d.x,y-d.y)
-    }
 }

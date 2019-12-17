@@ -67,5 +67,3 @@ fun main() {
     }
 
 }
-
-enum class Direction {UP, DOWN, LEFT, RIGHT }
