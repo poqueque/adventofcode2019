@@ -10,12 +10,10 @@ class Advent18 {
 
     var minTotal = Int.MAX_VALUE
     val cache = mutableMapOf<Pair<Char, String>, Pair<String, Int>>()
-    val seen = mutableMapOf<Pair<Coor, List<Char>>, Int>()
-
-    var pos = Coor(0, 0)
-    var nextItems: MutableList<Item> = mutableListOf(Item('@', 0, Coor(0, 0)))
+    val seen = mutableMapOf<Pair<List<Coor>, List<Char>>, Int>()
 
     val items = mutableMapOf<Char, Coor>()
+    val starts = mutableListOf<Coor>()
     var minDis = mutableMapOf<Pair<Item, String>, Int>()
     var validateMinDis = mutableMapOf<Pair<Item, String>, Int>()
 
@@ -24,11 +22,10 @@ class Advent18 {
     init {
         Time.start()
         var minSteps = Int.MAX_VALUE
-        nextItems = mutableListOf(Item('@', 0, Coor(0, 0)))
         val m = readMap()
 //            val p = processRecursive(m, Pair("", 0), items.toMutableMap(), mutableListOf<Char>())
 //            val steps = p.second
-        val steps = processRecursive2(m,items.toMutableMap(),mutableListOf())
+        val steps = processRecursive2(m,starts.toMutableList(),items.toMutableMap(),mutableListOf())
         Time.printEach(60)
         if (steps < minSteps) {
             minSteps = steps
@@ -38,82 +35,16 @@ class Advent18 {
         }
     }
 
-    private fun processRecursive(
-        m: MutableMap<Coor, Char>,
-        p: Pair<String, Int>,
-        items: MutableMap<Char, Coor>,
-        haveKeys: List<Char>
-    ): Pair<String, Int> {
-        val arroba = items['@']!!
-        val str = haveKeys.sorted().toList()
-
-/*        if (seen[Pair(arroba, str)]!= null)
-            return seen[Pair(arroba, str)]!!*/
-        Time.printEach(60)
-        var next = findItems(m)
-        //if (remaining.size > 25) next = mutableListOf(next[1])
-        if (next.isEmpty()) {
-            i++
-            if (p.second < minTotal) {
-                minTotal = p.second
-                println(p)
-            }
-            if (i % 10000 == 0) println("$i")
-            return p
-        } else if (random) {
-            next = mutableListOf(next.random())
-        }
-
-        var min = Int.MAX_VALUE
-        var res = p
-        var dif = 0
-        var char = '-'
-        next.map {
-            val m2 = m.toMutableMap()
-            val items2 = items.toMutableMap()
-            //pickKey
-            m2[items2[it.name]!!] = '.'
-            //unlock Door
-            if (items2[it.name.toUpperCase()] != null) m2[items2[it.name.toUpperCase()]!!] = '.'
-            //position @
-            m2[items2['@']!!] = '.'
-            m2[it.c] = '@'
-            items2['@'] = it.c
-            val hk2 = haveKeys.toMutableList()
-            hk2.add(it.name)
-            val p2 = processRecursive(
-                m2,
-                Pair(p.first + it.name, p.second + it.distance),
-                items2,
-                hk2
-            )
-            if (p2.second < min) {
-                min = p2.second
-                res = p2
-                dif = p.second + it.distance
-                char = it.name
-            }
-        }
-        val steps = res.second - dif
-        if (steps > 0)
-            if (haveKeys.size > levelCompleted) {
-                levelCompleted = haveKeys.size
-                println("LEVEL COMPLETED: $levelCompleted")
-            }
-//       seen[Pair(arroba, (haveKeys+char).sorted())] = res
-        return res
-    }
-
     var processes = 0
 
     private fun processRecursive2(
         m: MutableMap<Coor, Char>,
-        items: MutableMap<Char, Coor>,
+        starts: MutableList<Coor>,
+        items: MutableMap<Char,Coor>,
         haveKeys: List<Char>
     ): Int {
-        val arroba = items['@']!!
+        val arroba = starts
         val str = haveKeys.sorted().toList()
-
 
         if (seen[Pair(arroba, str)]!= null)
             return seen[Pair(arroba, str)]!!
@@ -124,36 +55,60 @@ class Advent18 {
             println("LEVEL: ${haveKeys.sorted().joinToString("")}")
         }
 
-        var next = findItems(m)
-        if (next.isEmpty()) {
+        val next1 = findItems(m,starts[0])
+        val next2 = findItems(m,starts[1])
+        val next3 = findItems(m,starts[2])
+        val next4 = findItems(m,starts[3])
+        val nexts = next1 + next2 + next3 + next4
+        if (nexts.isEmpty()) {
             i++
-            if (i % 10000 == 0) println("$i")
-            return 0
+            if (i % 2000 == 0) println("$i")
+            return if (haveKeys.size == 26)
+                0
+            else
+                1000
         }
 
         var min = Int.MAX_VALUE
-        var char = ' '
-        next.map {
+        nexts.map {
             val m2 = m.toMutableMap()
             val items2 = items.toMutableMap()
+            val starts2 = starts.toMutableList()
             //pickKey
             m2[items2[it.name]!!] = '.'
             //unlock Door
             if (items2[it.name.toUpperCase()] != null) m2[items2[it.name.toUpperCase()]!!] = '.'
             //position @
-            m2[items2['@']!!] = '.'
-            m2[it.c] = '@'
-            items2['@'] = it.c
+            if (next1.contains(it)) {
+                m2[starts2[0]] = '.'
+                m2[it.c] = '@'
+                starts2[0] = it.c
+            }
+            if (next2.contains(it)) {
+                m2[starts2[1]] = '.'
+                m2[it.c] = '@'
+                starts2[1] = it.c
+            }
+            if (next3.contains(it)) {
+                m2[starts2[2]] = '.'
+                m2[it.c] = '@'
+                starts2[2] = it.c
+            }
+            if (next4.contains(it)) {
+                m2[starts2[3]] = '.'
+                m2[it.c] = '@'
+                starts2[3] = it.c
+            }
             val hk2 = haveKeys.toMutableList()
             hk2.add(it.name)
             val p2 = it.distance + processRecursive2(
                 m2,
+                starts2,
                 items2,
                 hk2
             )
             if (p2 < min) {
                 min = p2
-                char = it.name
             }
         }
         if (haveKeys.size < 6 ) {
@@ -165,11 +120,10 @@ class Advent18 {
     }
 
 
-    private fun findItems(m: MutableMap<Coor, Char>): MutableList<Item> {
+    private fun findItems(m: MutableMap<Coor, Char>, start: Coor): MutableList<Item> {
         val nextItems = mutableListOf<Item>()
         val m2 = m.toMutableMap()
-        var positions = m2.filter { it.value == '@' }.keys.toList()
-//        var positions = listOf(items['@'])
+        var positions = listOf(start)
         var steps = 0
         while (positions.isNotEmpty()) {
             val newPos = mutableListOf<Coor>()
@@ -211,8 +165,8 @@ class Advent18 {
         File("input18.txt").forEachLine {
             it.forEachIndexed { x, c ->
                 m[Coor(x, y)] = c
-                if (c == '@') pos = Coor(x, y)
-                if (c != '.' && c != '#') items[c] = Coor(x, y)
+                if (c == '@') starts.add(Coor(x, y))
+                if (c != '.' && c != '#' && c != '@') items[c] = Coor(x, y)
             }
             y++
         }
