@@ -7,19 +7,41 @@ import kotlin.math.sqrt
 
 object Time {
 
-    var startTime = Date().time
+    var startTime = mutableMapOf<String, Long>()
+    var ended = mutableMapOf<String, Long>()
+    var lastPrint = Long.MIN_VALUE
 
-    fun start() {
-        startTime = Date().time
+    fun start(key: String = "") {
+        startTime[key] = Date().time
     }
 
-    fun print() {
-        Coor(1, 1)
-        println("Time: ${elapsed()}")
+    fun end(key: String = "") {
+        if (!startTime.containsKey(key)) return
+        ended[key] = Date().time- startTime[key]!!
     }
 
-    private fun elapsed(): String {
-        var curTime = Date().time - startTime
+    fun printLongestEndedKey() {
+        if (ended.isEmpty()) return
+        val k = ended.maxBy { it.value }!!
+        println("Longest: ${k.key} -> ${k.value}")
+    }
+
+    fun print(key: String = "") {
+        println("Time: ${elapsed(key)}")
+    }
+
+    fun printEach(seconds: Long, append:String = "", key: String = "") {
+        if (!startTime.containsKey(key)) return
+        var curTime = (Date().time - startTime[key]!!) / 1000
+        if (curTime >= lastPrint + seconds) {
+            println("Time: ${elapsed(key)} $append")
+            lastPrint = curTime
+        }
+    }
+
+    private fun elapsed(key: String = ""): String {
+        if (!startTime.containsKey(key)) return "Key $key not found"
+        var curTime = Date().time - startTime[key]!!
         var seconds = curTime / 1000
         val ms = curTime % 1000
         if (seconds < 60) return "0:${seconds.toString().padStart(2, '0')}.${ms.toString().padStart(
