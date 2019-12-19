@@ -78,6 +78,10 @@ data class Coor(var x: Int, var y: Int) {
     operator fun minus(d: Coor): Coor {
         return Coor(x - d.x, y - d.y)
     }
+
+    fun mod(): Double {
+        return sqrt(x*x+y*y.toDouble())
+    }
 }
 
 
