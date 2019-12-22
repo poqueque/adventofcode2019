@@ -163,7 +163,6 @@ class Advent20 (val file: String) {
     }
 }
 
-data class MutablePair<T, Z>(var first: T, var second: Z)
 
 fun main() {
     val input1 = Advent20("input20a.txt")

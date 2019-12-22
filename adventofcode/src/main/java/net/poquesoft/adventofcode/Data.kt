@@ -112,3 +112,4 @@ data class Coor3(val x: Int, val y: Int, val z: Int) {
 }
 
 
+data class MutablePair<T, Z>(var first: T, var second: Z)
