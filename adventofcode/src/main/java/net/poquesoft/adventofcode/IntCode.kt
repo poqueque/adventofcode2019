@@ -3,7 +3,8 @@ package net.poquesoft.adventofcode
 class IntCode(
     private val initArray: List<Long>,
     private val stopWhenOutput: Boolean = false,
-    private val logLevel: Int = INFO
+    private val logLevel: Int = INFO,
+    private val inputByDefault: Boolean = false
 ) {
     companion object {
         const val HALTCODE = Int.MIN_VALUE.toLong()
@@ -12,6 +13,7 @@ class IntCode(
         const val INFO = 1
     }
 
+    val inputQueue = mutableListOf<Long>()
     var keepOn = true
     var i = 0
     var k = 0
@@ -20,6 +22,7 @@ class IntCode(
     var inputList = mutableListOf<Long>()
     var halted = false
     var relativeBase = 0
+    var NetworkAddress = -1
 
     fun reset() {
         keepOn = true
@@ -27,7 +30,7 @@ class IntCode(
         k = 0
         d = initArray.toMutableList()
         output = 0L
-        inputList = mutableListOf<Long>()
+        inputList = mutableListOf()
         halted = false
         relativeBase = 0
     }
@@ -36,6 +39,9 @@ class IntCode(
         inputList.add(i)
     }
 
+    fun queue(i: Long) {
+        inputQueue.add(i)
+    }
 /*
     fun input(i: List<Int>) {
         i.map{
@@ -51,6 +57,14 @@ class IntCode(
     }
 
     fun run(): Long {
+        if (inputQueue.isNotEmpty()){
+            inputQueue.map{
+                input(it)
+            }
+            inputQueue.clear()
+        } else if (inputByDefault){
+            input(-1)
+        }
         while (keepOn) {
             if (d.size > i + 3 && logLevel <= DEBUG)
                 println("Step $i:  ${d[i]} ${d[i + 1]} ${d[i + 2]} ${d[i + 3]}")
