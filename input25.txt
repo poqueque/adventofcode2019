@@ -1,1 +1,4 @@
-west
+hypercube
+prime number
+mouse
+wreath

@@ -8,6 +8,7 @@ class Advent25 {
     val intCode = IntCode(program,true)
     var pos = Coor(0,0)
     val inputInstructions = mutableListOf<String>()
+    var nextInst = 0
 
     init {
         repeat(100) { intCode.addZeroes() }
@@ -18,17 +19,39 @@ class Advent25 {
 
     fun start() {
         var a = 0L
-        while (a != IntCode.HALTCODE && a != IntCode.NOT_ENOUGH_INPUT) {
+        while (a != IntCode.HALTCODE) {
             a = intCode.run()
             val c = a.toChar()
             if (c != 10.toChar())
                 print(c)
             else
                 println()
-            if (c == '?'){
-                nextInstruction()
+            if (a == IntCode.NOT_ENOUGH_INPUT){
+                if (!nextInstruction()) return
             }
         }
+    }
+
+    private fun nextInstruction(): Boolean {
+        val i = readLine()!!
+        println("Input: $i")
+        i.map{
+            intCode.input(it.toLong())
+        }
+        intCode.input(10L)
+        return true
+    }
+    private fun nextInstruction2(): Boolean{
+        if (inputInstructions.isEmpty())
+            return false
+        val i = inputInstructions[0]
+        println("Input: $i")
+        i.map{
+            intCode.input(it.toLong())
+        }
+        intCode.input(10L)
+        inputInstructions.removeAt(0)
+        return true
     }
 }
 

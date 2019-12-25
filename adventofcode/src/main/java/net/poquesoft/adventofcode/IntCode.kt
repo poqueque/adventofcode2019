@@ -3,8 +3,7 @@ package net.poquesoft.adventofcode
 class IntCode(
     private val initArray: List<Long>,
     private val stopWhenOutput: Boolean = false,
-    private val logLevel: Int = INFO,
-    private val inputByDefault: Boolean = false
+    private val logLevel: Int = INFO
 ) {
     companion object {
         const val HALTCODE = Int.MIN_VALUE.toLong()
@@ -57,14 +56,6 @@ class IntCode(
     }
 
     fun run(): Long {
-        if (inputQueue.isNotEmpty()){
-            inputQueue.map{
-                input(it)
-            }
-            inputQueue.clear()
-        } else if (inputByDefault){
-            input(-1)
-        }
         while (keepOn) {
             if (d.size > i + 3 && logLevel <= DEBUG)
                 println("Step $i:  ${d[i]} ${d[i + 1]} ${d[i + 2]} ${d[i + 3]}")
